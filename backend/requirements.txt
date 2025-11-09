@@ -1,0 +1,5 @@
+flask
+pymongo
+python-jose
+requests
+fastapi
