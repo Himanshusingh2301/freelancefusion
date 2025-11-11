@@ -8,11 +8,11 @@ const ClientProfile = ({ user, picurl }) => {
 
 
   return (
-    <div className="max-w-sm mx-auto relative bg-gray-900/60 backdrop-blur-md text-white rounded-2xl border border-gray-700 p-8 text-center shadow-lg">
+    <div className="h-fit  relative bg-gray-900/60 backdrop-blur-md text-white rounded-2xl border border-gray-700 p-8 text-center shadow-lg">
 
       <div onClick={() => navigate("/client-edit-profile")}
-       className="absolute top-4 right-4 bg-white/10 backdrop-blur-sm border border-white/20 p-2 rounded-full text-gray-200 hover:text-blue-400 hover:bg-white/20 cursor-pointer transition-all duration-300 shadow-lg">
-      
+        className="absolute top-4 right-4 bg-white/10 backdrop-blur-sm border border-white/20 p-2 rounded-full text-gray-200 hover:text-blue-400 hover:bg-white/20 cursor-pointer transition-all duration-300 shadow-lg">
+
         <FiEdit size={20} />
       </div>
 
@@ -32,14 +32,25 @@ const ClientProfile = ({ user, picurl }) => {
       <p className="text-gray-400 mb-4">{user?.email || "johndoe@email.com"}</p>
 
       {/* Project Count */}
-      <div className="bg-gray-800/70 rounded-lg py-2 mb-6 border border-gray-700">
-        <p className="text-sm text-gray-300">
-          <span className="text-xl font-semibold text-purple-400">
-            {user?.projectsPosted || 0}
-          </span>{" "}
-          Projects Posted
-        </p>
-      </div>
+      {user?.role === "client" ? (
+        <div className="bg-gray-800/70 rounded-lg py-2 mb-6 border border-gray-700">
+          <p className="text-sm text-gray-300">
+            <span className="text-xl font-semibold text-purple-400">
+              {user?.projectsPosted || 0}
+            </span>{" "}
+            Projects Posted
+          </p>
+        </div>
+      ) : user?.role === "freelancer" ? (
+        <div className="bg-gray-800/70 rounded-lg py-2 mb-6 border border-gray-700">
+          <p className="text-sm text-gray-300">
+            <span className="text-xl font-semibold text-purple-400">
+              {user?.projectsDone || 0}
+            </span>{" "}
+            Projects Done
+          </p>
+        </div>
+      ) : null}
 
       {/* Social Links */}
       <div className="flex flex-col items-center gap-4 mb-6">
@@ -66,7 +77,7 @@ const ClientProfile = ({ user, picurl }) => {
               href={user.linkedin}
               target="_blank"
               rel="noreferrer"
-              className="text-gray-300 hover:text-blue-400 text-2xl transition"
+              className="text-gray-300 hover:text-white text-2xl transition"
             >
               <FaLinkedin />
             </a>

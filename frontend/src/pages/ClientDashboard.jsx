@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import ClientProfile from "@/components/ClientProfile";
 import { useUser, useAuth } from "@clerk/clerk-react";
+import ProjectsCard from "@/components/ProjectsCard";
+import FreelancerSearchCard from "@/components/FreelancerSearchCard";
 
 const ClientDashboard = () => {
   const { user, isSignedIn } = useUser();
   const [dbUser, setDbUser] = useState(null);
   const { getToken } = useAuth();
-  const [picurl, setpicurl] = useState(null)
+  const [picurl, setpicurl] = useState(null);
 
   useEffect(() => {
     if (!isSignedIn) return;
@@ -43,8 +45,10 @@ const ClientDashboard = () => {
   return (
     <div className="min-h-screen bg-[url('/firstbg.png')] bg-cover bg-center bg-no-repeat">
       <Navbar />
-      <div className="flex items-center justify-start pt-[120px] pb-[20px] px-[30px]">
+      <div className="flex justify-evenly min-h-screen pt-[120px] pb-[20px] px-[30px]">
         <ClientProfile user={dbUser} picurl={picurl}/>
+        <ProjectsCard/>
+        <FreelancerSearchCard/>
       </div>
     </div>
   );
