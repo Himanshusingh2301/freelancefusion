@@ -6,7 +6,7 @@ from models.user_model import (
     create_user,
     serialize_user,
     update_user_role,
-    update_user_profile,
+    
 )
 
 user_bp = Blueprint("user", __name__)

@@ -8,9 +8,9 @@ const ClientProfile = ({ user, picurl }) => {
 
 
   return (
-    <div className="h-fit  relative bg-gray-900/60 backdrop-blur-md text-white rounded-2xl border border-gray-700 p-8 text-center shadow-lg">
+    <div className="h-fit w-[300px] relative bg-gray-900/60 backdrop-blur-md text-white rounded-2xl border border-gray-700 p-8 text-center shadow-lg">
 
-      <div onClick={() => navigate("/client-edit-profile")}
+      <div onClick={() => navigate("/edit-profile")}
         className="absolute top-4 right-4 bg-white/10 backdrop-blur-sm border border-white/20 p-2 rounded-full text-gray-200 hover:text-blue-400 hover:bg-white/20 cursor-pointer transition-all duration-300 shadow-lg">
 
         <FiEdit size={20} />

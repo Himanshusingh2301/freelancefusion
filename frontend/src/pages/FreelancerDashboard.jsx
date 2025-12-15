@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import ClientProfile from "@/components/ClientProfile";
 import { useUser, useAuth } from "@clerk/clerk-react";
-import ProjectsCard from "@/components/ProjectsCard";
-import FreelancerSearchCard from "@/components/FreelancerSearchCard";
 import FreelancerSectionsDash from "@/components/FreelancerSectionsDash";
+import { Spinner } from "@/components/ui/spinner";
 
 const FreelancerDashboard = () => {
 
@@ -12,6 +11,7 @@ const FreelancerDashboard = () => {
     const [dbUser, setDbUser] = useState(null);
     const { getToken } = useAuth();
     const [picurl, setpicurl] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (!isSignedIn) return;
@@ -20,7 +20,9 @@ const FreelancerDashboard = () => {
             const token = await getToken({ template: "default" });
 
             try {
-                const res = await fetch("http://localhost:5000/api/get-user", {
+                const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+                const res = await fetch(`${BASE_URL}/get-user`, {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -35,6 +37,8 @@ const FreelancerDashboard = () => {
                 }
             } catch (err) {
                 console.error("Fetch error:", err);
+            } finally {
+                setLoading(false);
             }
         };
         setpicurl(user.imageUrl)
@@ -42,14 +46,20 @@ const FreelancerDashboard = () => {
         fetchUserData();
     }, [isSignedIn, user, getToken]);
 
-    if (!dbUser) return <div className="text-white">Loading user data...</div>;
-
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-black">
+                <Spinner className="size-18 text-purple-500" />
+            </div>
+        );
+    }
+    if (!dbUser) return null;
     return (
         <div className="min-h-screen bg-[url('/firstbg.png')] bg-cover bg-center bg-no-repeat">
             <Navbar />
             <div className="flex justify-evenly min-h-screen pt-[120px] pb-[20px] px-[30px]">
                 <ClientProfile user={dbUser} picurl={picurl} />
-               <FreelancerSectionsDash/>
+                <FreelancerSectionsDash />
             </div>
         </div>
     )

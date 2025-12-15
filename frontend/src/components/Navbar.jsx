@@ -25,19 +25,21 @@ const Navbar = () => {
 
     useEffect(() => {
         const addUserToDB = async () => {
-            if (!user) return; // Wait until user is signed in
-            const token = await getToken({ template: "default" }); // Clerk JWT
+            if (!user) return; 
+            const token = await getToken({ template: "default" });
+            console.log(token)
+            const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
             try {
-                const res = await fetch("http://localhost:5000/api/add-user", {
+                const res = await fetch(`${BASE_URL}/add-user`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
                     },
-                   
+
                 });
-                
+
                 const data = await res.json();
                 console.log("✅ User sync result:", data);
             } catch (err) {

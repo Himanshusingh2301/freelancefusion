@@ -34,7 +34,7 @@ const FreelancerSectionsDash = () => {
           className="relative bg-gray-900/60 border border-gray-700/70 shadow-lg 
                      hover:shadow-[0_0_20px_rgba(139,92,246,0.3)] 
                      transition-all duration-500 rounded-2xl backdrop-blur-sm 
-                     overflow-hidden group px-5"
+                     overflow-hidden group px-5 h-fit"
         >
           {/* subtle metallic shine effect */}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@clerk/clerk-react";
 
-const ClientEditProfile = () => {
+const EditProfile = () => {
   const { getToken } = useAuth();
   const [formData, setFormData] = useState({
     full_name: "",
@@ -16,7 +16,8 @@ const ClientEditProfile = () => {
     const fetchUserData = async () => {
       try {
         const token = await getToken();
-        const res = await fetch("http://localhost:5000/api/get-user", {
+      const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+        const res = await fetch(`${BASE_URL}/get-user`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -165,4 +166,4 @@ const ClientEditProfile = () => {
   );
 };
 
-export default ClientEditProfile;
+export default EditProfile;

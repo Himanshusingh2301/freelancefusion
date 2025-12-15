@@ -29,7 +29,7 @@ def create_user(clerk_id, email, full_name):
 
     }
     users_collection.insert_one(new_user)
-    return new_user
+    return serialize_user(new_user)
 
 
 def update_user_role(clerk_id, new_role):

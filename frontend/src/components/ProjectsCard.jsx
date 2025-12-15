@@ -2,6 +2,7 @@ import * as React from "react"
 import Autoplay from "embla-carousel-autoplay"
 import { Plus } from "lucide-react";
 import { ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -12,6 +13,8 @@ import {
 } from "@/components/ui/carousel"
 
 const ProjectsCard = () => {
+      const navigate = useNavigate();
+    
     const plugin = React.useRef(
         Autoplay({ delay: 2000, stopOnInteraction: true })
     )
@@ -25,7 +28,7 @@ const ProjectsCard = () => {
     return (
         <div>
             <div
-
+                onClick={()=>navigate("/client-dashboard/projects-list")}
                 className="h-[150px] w-[430px] cursor-pointer relative px-6 flex justify-between items-center
                 text-white font-semibold text-lg rounded-xl
                 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900
@@ -52,7 +55,7 @@ const ProjectsCard = () => {
             </div>
 
             <div
-
+               onClick={()=>navigate("/client-dashboard/post-project")}
                 className="h-[110px] w-[430px] mt-5 cursor-pointer relative px-6 flex justify-between items-center
                 text-white font-semibold text-lg rounded-xl
                 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900
