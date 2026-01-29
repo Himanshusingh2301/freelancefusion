@@ -1,65 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "@clerk/clerk-react";
 import { Pencil, Trash2, ArrowRight, Paperclip } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 import { Spinner } from "@/components/ui/spinner";
 import SidePanel from "@/components/ClientsidePanel";
 
-const ClientProjectsList = () => {
+const ActiveProjectList = () => {
   const navigate = useNavigate();
-  const { getToken } = useAuth();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchProjects = async () => {
-    const token = await getToken();
     try {
       const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-      const res = await fetch(`${BASE_URL}/get-project`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await fetch(`${BASE_URL}/get-all-projects`, {
+       
       });
 
       const data = await res.json();
-      setProjects(data.projects || []);
+
+      // ✅ FILTER ONLY "not taken" PROJECTS
+      const notTakenProjects = (data.projects || []).filter(
+        (project) => project.status === "not taken"
+      );
+      setProjects(notTakenProjects);
     } catch (err) {
       console.error(err);
     }
     setLoading(false);
-  };
-
-
-  const handleDelete = async (projectId) => {
-    if (!window.confirm("Are you sure you want to delete this project?")) {
-      return;
-    }
-
-    try {
-      const token = await window.Clerk.session.getToken();
-      const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-      const response = await fetch(
-        `${BASE_URL}/delete-project/${projectId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success("Project deleted successfully!");
-        fetchProjects(); // Re-fetch project list
-      } else {
-        toast.error(data.error || "Failed to delete project");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong");
-    }
   };
 
 
@@ -75,18 +42,12 @@ const ClientProjectsList = () => {
     );
   }
 
-  const getStatusColor = (status) => {
-    return status === "completed"
-      ? "bg-green-500/20 text-green-500 border-green-500/40"
-      : status === "ongoing"
-        ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/40"
-        : "bg-red-500/20 text-red-400 border-red-500/40";
-  };
+ 
 
   return (
     <div className="min-h-screen bg-[url('/editbg.png')] bg-cover bg-center text-white relative">
       <div className="fixed left-6 top-1/3 -translate-y-1/2 z-50">
-      <SidePanel/>
+        <SidePanel />
       </div>
       {/* FIXED TOP HEADING */}
       <div className="fixed w-screen top-0 z-50 bg-black/10 backdrop-blur-md py-5 shadow-lg border-b border-black">
@@ -146,10 +107,10 @@ const ClientProjectsList = () => {
                 <p
                   className={`
                     inline-block px-4 py-1 rounded-full text-sm font-semibold  
-                    border ${getStatusColor(project.status)}
+                    border bg-red-500/20 text-red-400 border-red-500/40
                   `}
                 >
-                  {project.status.toUpperCase()}
+                  Deadline: { new Date(project.deadline).toLocaleDateString("en-GB")}
                 </p>
 
                 {/* BUDGET BADGE */}
@@ -184,31 +145,17 @@ const ClientProjectsList = () => {
             {/* RIGHT ICONS */}
             <div className="flex items-center gap-4">
 
-              {/* EDIT */}
-              <button
-                onClick={() => navigate(`/edit-project/${project._id}`)}
-                title="Edit Project"
-                className="p-2 rounded-full bg-purple-500/20 border border-purple-500/40 hover:bg-purple-500/30 transition"
-              >
-                <Pencil size={20} className="text-purple-300" />
-              </button>
-
-              {/* DELETE */}
-              <button
-                onClick={() => handleDelete(project._id)}
-                title="Delete Project"
-                className="p-2 rounded-full bg-red-500/20 border border-red-500/40 hover:bg-red-500/30 transition"
-              >
-                <Trash2 size={20} className="text-red-300" />
-              </button>
-
+              
               {/* FULL DETAILS */}
               <button
-                onClick={() => navigate(`/project/${project.id}`)}
-                title="View Details"
-                className="p-2 rounded-full bg-white/20 border border-white/40 hover:bg-white/30 transition"
+                onClick={() => navigate(`/project/${project._id}`)}
+                className="px-2 py-1 text-sm font-semibold rounded-full bg-white/20 border border-white/40 hover:bg-white/30 transition"
               >
-                <ArrowRight size={22} className="text-white" />
+                View Details
+              </button>
+
+              <button>
+                
               </button>
 
             </div>
@@ -219,4 +166,4 @@ const ClientProjectsList = () => {
   );
 };
 
-export default ClientProjectsList;
+export default ActiveProjectList;

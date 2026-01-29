@@ -1,19 +1,14 @@
 import React from 'react'
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
-import LoadingBar from "react-top-loading-bar";
-import { useRef } from "react";
+
 
 const FirstSec = () => {
 
   const { getToken } = useAuth();
   const navigate = useNavigate();
-  const loadingRef = useRef(null)
   const handleRoleSelect = async (role) => {
     try {
-
-      loadingRef.current.staticStart(80);
-
       // Get the Clerk token
       const token = await getToken();
       const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -33,7 +28,6 @@ const FirstSec = () => {
       } else {
         console.log(`Failed: ${data.error}`);
       }
-      loadingRef.current.complete();
 
       if (role === "client") {
         navigate("/client-dashboard");
@@ -41,21 +35,12 @@ const FirstSec = () => {
         navigate("/freelancer-dashboard");
       }
     } catch (err) {
-      loadingRef.current.complete();
       console.error("Error updating role:", err);
     }
   };
 
   return (
     <>
-    <LoadingBar
-        ref={loadingRef}
-        color="#a855f7"   // purple
-        height={3}
-        transitionTime={150}
-        shadow={false}
-      />
-
     <div className='h-[100vh] bg-[url("/firstbg.png")] bg-cover bg-center bg-no-repeat'>
 
       <div className=' flex flex-col justify-center w-[60%]  h-full  items-center'>

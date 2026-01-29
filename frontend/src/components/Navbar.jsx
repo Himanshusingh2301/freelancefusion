@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+
 import {
     useUser,
     useAuth,
@@ -18,19 +19,21 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
     const { user } = useUser();
     const { getToken } = useAuth();
-
+    const navigate = useNavigate();
     useEffect(() => {
         const addUserToDB = async () => {
-            if (!user) return; 
+            if (!user) return;
             const token = await getToken({ template: "default" });
-            console.log(token)
+            // console.log(token)
             const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
             try {
+                // eslint-disable-next-line no-unused-vars
                 const res = await fetch(`${BASE_URL}/add-user`, {
                     method: "POST",
                     headers: {
@@ -40,8 +43,8 @@ const Navbar = () => {
 
                 });
 
-                const data = await res.json();
-                console.log("✅ User sync result:", data);
+                // const data = await res.json();
+                // console.log("✅ User sync result:", data);
             } catch (err) {
                 console.error("❌ Error syncing user:", err);
             }
@@ -51,6 +54,8 @@ const Navbar = () => {
     }, [user, getToken]);
 
     return (
+        <>
+      
         <nav className="fixed top-0 left-0 w-full bg-black/10 backdrop-blur-md text-white px-6 py-3 flex items-center justify-between z-50">
             {/* LEFT SECTION */}
             <div className="flex gap-15 items-center">
@@ -61,6 +66,9 @@ const Navbar = () => {
                 </div>
 
                 <div className="menulinks flex gap-12">
+                    <span className="cursor-pointer hover:text-pink-500" onClick={() => {
+                        navigate("/")
+                    }}>Home</span>
                     {/* Menu 1 */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild className="outline-0">
@@ -151,6 +159,7 @@ const Navbar = () => {
                 </SignedIn>
             </div>
         </nav>
+        </>
     );
 };
 

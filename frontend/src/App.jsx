@@ -1,5 +1,6 @@
 import { Routes, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
+import RouteLoader from "./components/RouteLoader";
 import { Toaster } from "react-hot-toast";
 import ClientDashboard from "./pages/ClientDashboard";
 import EditProfile from "./pages/EditProfile";
@@ -7,7 +8,10 @@ import FreelancerDashboard from "./pages/FreelancerDashboard";
 import ClientPostProject from "./pages/ClientPostProject";
 import ClientProjectsList from "./pages/ClientProjectsList";
 import EditProject from "./pages/EditProject";
+import PostFreelancer from "./pages/PostFreelancer";
+import ActiveProjectList from "./pages/ActiveProjectList";
 function App() {
+
   return (
     <div>
       <Toaster
@@ -64,7 +68,7 @@ function App() {
           },
         }}
       />
-
+      <RouteLoader />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/client-dashboard" element={<ClientDashboard />} />
@@ -73,6 +77,8 @@ function App() {
         <Route path="/client-dashboard/projects-list" element={<ClientProjectsList />} />
         <Route path="/edit-project/:id" element={<EditProject />} />
         <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/freelancer/apply" element = {<PostFreelancer/>} />
+        <Route path="/freelancer/find-projects" element={<ActiveProjectList/>} />
       </Routes>
     </div>
   );

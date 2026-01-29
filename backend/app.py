@@ -3,6 +3,7 @@ from flask_cors import CORS
 from routes.user_routes import user_bp
 from routes.auth_routes import auth_bp
 from routes.project_routes import project_bp
+from routes.freelancer_routes import freelancer_bp
 import os
 
 
@@ -26,6 +27,7 @@ CORS(
 app.register_blueprint(auth_bp, url_prefix="/freelancefusion")
 app.register_blueprint(user_bp, url_prefix="/freelancefusion")
 app.register_blueprint(project_bp, url_prefix="/freelancefusion")
+app.register_blueprint(freelancer_bp, url_prefix="/freelancefusion")
 
 # ----------------------------
 # Run Server

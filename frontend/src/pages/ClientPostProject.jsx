@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-
+import SidePanel from "@/components/ClientsidePanel";
 import {
   Popover,
   PopoverTrigger,
@@ -100,7 +100,10 @@ const ClientPostProject = () => {
   };
 
   return (
-    <div className="min-h-screen p-8 flex items-center justify-center bg-[url('/editbg.png')] bg-cover bg-center">
+    <div className="min-h-screen p-8 flex  justify-center bg-[url('/editbg.png')] bg-cover bg-center">
+      <div className="fixed left-6 top-1/4 -translate-y-1/2 z-50">
+      <SidePanel/>
+      </div>
       <Card className="w-full max-w-2xl bg-black/40 border border-gray-700 rounded-2xl backdrop-blur-md shadow-lg p-8 text-white">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-gray-100">

@@ -46,7 +46,7 @@ const ClientDashboard = () => {
     fetchUserData();
   }, [isSignedIn, user, getToken]);
 
-    if (loading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
         <Spinner className="size-18 text-purple-500" />

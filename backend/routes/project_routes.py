@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, current_app
 from werkzeug.utils import secure_filename
 from auth.clerk_auth import verify_clerk_token
-from models.project_model import create_project, serialize_project, find_projects_by_client,find_project_by_id,update_project_details
+from models.project_model import create_project, serialize_project, find_projects_by_client,find_project_by_id,update_project_details,get_all_projects
 import os
 import uuid
 from bson import ObjectId
@@ -95,6 +95,16 @@ def get_project():
         return jsonify({"success": False, "message": "Server error"}), 500
     
 
+@project_bp.route("/get-all-projects", methods=["GET"])
+def get_all_projects_route():
+    try:
+        projects = get_all_projects()  
+        return jsonify({"success": True, "projects": projects}), 200
+    except Exception as e:
+        print("Error:", e)
+        return jsonify({"success": False, "message": "Server error"}), 500
+
+
 @project_bp.route("/get-project/<project_id>", methods=["GET"])
 def get_project_id(project_id):
     try:
@@ -108,6 +118,7 @@ def get_project_id(project_id):
     except Exception as e:
         print("Error fetching project:", e)
         return jsonify({"error": "Server error"}), 500
+    
 
 @project_bp.route("/update-project/<project_id>", methods=["PUT"])
 def update_project(project_id):
