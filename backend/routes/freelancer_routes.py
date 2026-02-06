@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models.freelancer_model import create_freelancer, serialize_freelancer
+from models.freelancer_model import create_freelancer, serialize_freelancer, get_all_freelancers
 from auth.clerk_auth import verify_clerk_token
 
 freelancer_bp = Blueprint("freelancer", __name__)
@@ -51,6 +51,21 @@ def create_new_freelancer():
             "message": "Freelancer profile created successfully",
             "freelancer": serialize_freelancer(freelancer)
         }), 201
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@freelancer_bp.route("/get-all-freelancers", methods=["GET"])
+def fetch_all_freelancers():
+    try:
+        freelancers = get_all_freelancers()
+
+        return jsonify({
+            "success": True,
+            "count": len(freelancers),
+            "freelancers": freelancers
+        }), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500

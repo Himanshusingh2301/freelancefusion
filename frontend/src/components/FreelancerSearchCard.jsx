@@ -2,6 +2,7 @@ import * as React from "react";
 import Autoplay from "embla-carousel-autoplay";
 import { ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 import {
   Carousel,
   CarouselContent,
@@ -12,7 +13,7 @@ const FreelancerSearchCard = () => {
   const plugin = React.useRef(
     Autoplay({ delay: 2000, stopOnInteraction: true })
   );
-
+  const navigate = useNavigate();
   const images = ["/5.jpg", "/6.jpg", "/7.jpeg", "/8.avif", "/9.jpg"];
 
   return (
@@ -33,7 +34,7 @@ const FreelancerSearchCard = () => {
               Search for Freelancer
             </h3>
 
-            <div className="flex items-center justify-center bg-gradient-to-r from-gray-700 to-gray-600 rounded-full p-3 shadow-inner border border-gray-600 hover:scale-105 transition-transform">
+            <div onClick={()=> navigate("/freelancer/find-freelancer")} className="flex items-center cursor-pointer justify-center bg-gradient-to-r from-gray-700 to-gray-600 rounded-full p-3 shadow-inner border border-gray-600 hover:scale-105 transition-transform">
               <ArrowRight size={22} className="text-gray-200" />
             </div>
           </div>

@@ -35,3 +35,6 @@ def create_freelancer(freelancer_clerk_id, full_name, title, skills, experience_
     freelancers_collection.insert_one(new_freelancer)
     return new_freelancer
 
+def get_all_freelancers():
+    freelancers = freelancers_collection.find()
+    return [serialize_freelancer(f) for f in freelancers]
