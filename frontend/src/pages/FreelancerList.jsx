@@ -35,15 +35,35 @@ const FreelancerList = () => {
 
   const filteredFreelancers = useMemo(() => {
     if (!search.trim()) return freelancers;
-    const q = search.toLowerCase();
 
-    return freelancers.filter(
-      (f) =>
-        f.full_name.toLowerCase().includes(q) ||
-        f.title.toLowerCase().includes(q) ||
-        f.skills.toLowerCase().includes(q)
-    );
+    // Split input into keywords
+    const keywords = search
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    return freelancers.filter((f) => {
+      // Text fields combined
+      const textBlob = `
+      ${f.full_name}
+      ${f.title}
+      ${f.skills}
+      ${f.experience_level}
+      ${f.availability}
+    `.toLowerCase();
+
+      return keywords.every((word) => {
+        // 🔹 Numeric match (budget / hourly rate)
+        if (!isNaN(word)) {
+          return String(f.hourly_rate).includes(word);
+        }
+
+        // 🔹 Text match
+        return textBlob.includes(word);
+      });
+    });
   }, [search, freelancers]);
+
 
   if (loading) {
     return (
