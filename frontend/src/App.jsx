@@ -11,6 +11,7 @@ import EditProject from "./pages/EditProject";
 import PostFreelancer from "./pages/PostFreelancer";
 import ActiveProjectList from "./pages/ActiveProjectList";
 import FreelancerList from "./pages/FreelancerList";
+import ProjectFullDetails from "./pages/ProjectFullDetails";
 function App() {
 
   return (
@@ -81,6 +82,7 @@ function App() {
         <Route path="/freelancer/apply" element = {<PostFreelancer/>} />
         <Route path="/freelancer/find-projects" element={<ActiveProjectList/>} />
         <Route path="/freelancer/find-freelancer" element={<FreelancerList/>} />
+        <Route path="/project/:projectId" element={<ProjectFullDetails />} />
       </Routes>
     </div>
   );
