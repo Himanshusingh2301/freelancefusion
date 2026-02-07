@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models.freelancer_model import create_freelancer, serialize_freelancer, get_all_freelancers
+from models.freelancer_model import create_freelancer, serialize_freelancer, get_all_freelancers,get_freelancer_by_id
 from auth.clerk_auth import verify_clerk_token
 
 freelancer_bp = Blueprint("freelancer", __name__)
@@ -65,6 +65,22 @@ def fetch_all_freelancers():
             "success": True,
             "count": len(freelancers),
             "freelancers": freelancers
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@freelancer_bp.route("/get-freelancer/<freelancer_id>", methods=["GET"])
+def fetch_freelancer_by_id(freelancer_id):
+    try:
+        freelancer = get_freelancer_by_id(freelancer_id)
+
+        if not freelancer:
+            return jsonify({"error": "Freelancer not found"}), 404
+
+        return jsonify({
+            "success": True,
+            "freelancer": freelancer
         }), 200
 
     except Exception as e:

@@ -38,3 +38,13 @@ def create_freelancer(freelancer_clerk_id, full_name, title, skills, experience_
 def get_all_freelancers():
     freelancers = freelancers_collection.find()
     return [serialize_freelancer(f) for f in freelancers]
+
+
+def get_freelancer_by_id(freelancer_id):
+    try:
+        freelancer = freelancers_collection.find_one(
+            {"_id": ObjectId(freelancer_id)}
+        )
+        return serialize_freelancer(freelancer)
+    except Exception:
+        return None

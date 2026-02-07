@@ -12,6 +12,7 @@ import PostFreelancer from "./pages/PostFreelancer";
 import ActiveProjectList from "./pages/ActiveProjectList";
 import FreelancerList from "./pages/FreelancerList";
 import ProjectFullDetails from "./pages/ProjectFullDetails";
+import FreelancerFullDetails from "./pages/FreelancerFullDetails";
 function App() {
 
   return (
@@ -83,6 +84,7 @@ function App() {
         <Route path="/freelancer/find-projects" element={<ActiveProjectList/>} />
         <Route path="/freelancer/find-freelancer" element={<FreelancerList/>} />
         <Route path="/project/:projectId" element={<ProjectFullDetails />} />
+        <Route path="/freelancer/:freelancerId" element={<FreelancerFullDetails />} />
       </Routes>
     </div>
   );
