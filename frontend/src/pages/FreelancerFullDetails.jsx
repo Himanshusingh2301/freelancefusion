@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Github, ArrowLeft, Mail } from "lucide-react";
+import { Github, ArrowLeft, Mail, Linkedin, Globe2 } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 
 const FreelancerFullDetails = () => {
@@ -20,7 +20,7 @@ const FreelancerFullDetails = () => {
       }
 
       const data = await res.json();
-      setFreelancer(data.freelancer );
+      setFreelancer(data.freelancer);
     } catch (err) {
       console.error(err);
       setFreelancer(null);
@@ -104,28 +104,71 @@ const FreelancerFullDetails = () => {
 
           {/* SKILLS */}
           <div className="mt-6">
-            <h3 className="text-lg font-semibold text-white mb-2">
-              Skills
-            </h3>
-            <p className="text-gray-300">
-              {freelancer.skills}
-            </p>
+            <h3 className="text-lg font-semibold text-white mb-2">Skills</h3>
+            <p className="text-gray-300">{freelancer.skills}</p>
           </div>
 
           {/* ABOUT */}
           <div className="mt-6">
-            <h3 className="text-lg font-semibold text-white mb-2">
-              About
-            </h3>
+            <h3 className="text-lg font-semibold text-white mb-2">About</h3>
             <p className="text-gray-300 leading-relaxed">
               {freelancer.about}
             </p>
           </div>
 
-          {/* CONTACT SECTION */}
-          <div className="mt-10 pt-6 border-t border-white/10 flex items-center justify-between flex-wrap gap-4">
+          {/* CONTACT DETAILS */}
+          <div className="mt-10 pt-6 border-t border-white/10">
+            <h3 className="text-lg font-semibold mb-4">Contact & Profiles</h3>
 
-            {/* PORTFOLIO */}
+            <div className="flex flex-col gap-4">
+
+              {/* GMAIL */}
+              {freelancer.email && (
+                <div className="flex items-center gap-3 text-gray-300">
+                  <Mail size={18} className="text-purple-400" />
+                  <a
+                    href={`mailto:${freelancer.email}`}
+                    className="hover:text-white transition"
+                  >
+                    {freelancer.email}
+                  </a>
+                </div>
+              )}
+
+              {/* GITHUB */}
+              {freelancer.github && (
+                <div className="flex items-center gap-3 text-gray-300">
+                  <Github size={18} className="text-gray-400" />
+                  <a
+                    href={freelancer.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition"
+                  >
+                    {freelancer.github}
+                  </a>
+                </div>
+              )}
+
+              {/* LINKEDIN */}
+              {freelancer.linkedin && (
+                <div className="flex items-center gap-3 text-gray-300">
+                  <Linkedin size={18} className="text-blue-400" />
+                  <a
+                    href={freelancer.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition"
+                  >
+                    {freelancer.linkedin}
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ACTION BUTTONS */}
+          <div className="mt-8 flex flex-wrap gap-4">
             {freelancer.portfolio_url && (
               <a
                 href={freelancer.portfolio_url}
@@ -137,25 +180,26 @@ const FreelancerFullDetails = () => {
                   hover:bg-white/30 transition
                 "
               >
-                <Github size={18} />
+                <Globe2 size={18} />
                 View Portfolio
               </a>
             )}
 
-            {/* CONTACT BUTTON */}
-            <a
-              href={`mailto:?subject=Project Inquiry&body=Hi ${freelancer.full_name}, I would like to discuss a project with you.`}
-              className="
-                inline-flex items-center gap-2 px-6 py-3
-                rounded-full
-                bg-purple-500/20 text-purple-300
-                border border-purple-500/40
-                hover:bg-purple-500/30 transition
-              "
-            >
-              <Mail size={18} />
-              Contact Freelancer
-            </a>
+            {freelancer.email && (
+              <a
+                href={`mailto:${freelancer.email}?subject=Project Inquiry&body=Hi ${freelancer.full_name}, I would like to discuss a project with you.`}
+                className="
+                  inline-flex items-center gap-2 px-6 py-3
+                  rounded-full
+                  bg-purple-500/20 text-purple-300
+                  border border-purple-500/40
+                  hover:bg-purple-500/30 transition
+                "
+              >
+                <Mail size={18} />
+                Contact Freelancer
+              </a>
+            )}
           </div>
         </div>
       </div>
