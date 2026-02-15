@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import toast from "react-hot-toast";
 import { Spinner } from "@/components/ui/spinner";
@@ -10,7 +10,6 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-
 import {
   Command,
   CommandEmpty,
@@ -19,7 +18,6 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-
 import { ChevronsUpDown, Check } from "lucide-react";
 
 // Category options
@@ -43,32 +41,39 @@ const ClientPostProject = () => {
     skills: "",
     category: "",
     file_url: "",
+    email: "",
+    linkedin: "",
   });
 
-  // Handle Input Change
+  // Auto-fill from Clerk
+  useEffect(() => {
+    const user = window.Clerk?.user;
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        email: user.primaryEmailAddress?.emailAddress || "",
+    
+      }));
+    }
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const token = await window.Clerk.session.getToken();
-
-    const form = new FormData();
-    form.append("title", formData.title);
-    form.append("description", formData.description);
-    form.append("budget", formData.budget);
-    form.append("deadline", formData.deadline);
-    form.append("skills", formData.skills);
-    form.append("category", formData.category);
-    form.append("file_url", formData.file_url);
-
     try {
+      const token = await window.Clerk.session.getToken();
       const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+      const form = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        form.append(key, value);
+      });
 
       const response = await fetch(`${BASE_URL}/post-project`, {
         method: "POST",
@@ -77,13 +82,12 @@ const ClientPostProject = () => {
       });
 
       const data = await response.json();
-      console.log(data);
+      if (!response.ok) throw new Error(data.error);
 
       toast.success("Project posted successfully!");
-      setLoading(false);
 
-      // Reset form
-      setFormData({
+      setFormData((prev) => ({
+        ...prev,
         title: "",
         description: "",
         budget: "",
@@ -91,19 +95,21 @@ const ClientPostProject = () => {
         skills: "",
         category: "",
         file_url: "",
-      });
+       
+      }));
     } catch (err) {
-      console.error(err);
-      toast.error("Failed to post project");
+      toast.error(err.message || "Failed to post project");
+    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen p-8 flex  justify-center bg-[url('/editbg.png')] bg-cover bg-center">
+    <div className="min-h-screen p-8 flex justify-center bg-[url('/editbg.png')] bg-cover bg-center">
       <div className="fixed left-6 top-1/4 -translate-y-1/2 z-50">
-      <SidePanel/>
+        <SidePanel />
       </div>
+
       <Card className="w-full max-w-2xl bg-black/40 border border-gray-700 rounded-2xl backdrop-blur-md shadow-lg p-8 text-white">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-gray-100">
@@ -117,15 +123,13 @@ const ClientPostProject = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-5">
 
-            {/* Project Title */}
+            {/* Title */}
             <div>
               <label className="block text-gray-300 mb-1">Project Title</label>
               <input
-                type="text"
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
-                placeholder="e.g. Build a portfolio website"
                 className="w-full p-3 rounded-lg bg-[#0f0f0f] border border-gray-600"
                 required
               />
@@ -139,10 +143,9 @@ const ClientPostProject = () => {
                 value={formData.description}
                 onChange={handleChange}
                 rows="4"
-                placeholder="Describe your project..."
                 className="w-full p-3 rounded-lg bg-[#0f0f0f] border border-gray-600 resize-none"
                 required
-              ></textarea>
+              />
             </div>
 
             {/* Budget & Deadline */}
@@ -154,7 +157,6 @@ const ClientPostProject = () => {
                   name="budget"
                   value={formData.budget}
                   onChange={handleChange}
-                  placeholder="e.g. 5000"
                   className="w-full p-3 rounded-lg bg-[#0f0f0f] border border-gray-600"
                   required
                 />
@@ -177,18 +179,16 @@ const ClientPostProject = () => {
             <div>
               <label className="block text-gray-300 mb-1">Required Skills</label>
               <input
-                type="text"
                 name="skills"
                 value={formData.skills}
                 onChange={handleChange}
-                placeholder="e.g. React, Node.js"
                 className="w-full p-3 rounded-lg bg-[#0f0f0f] border border-gray-600"
                 required
               />
             </div>
 
-            {/* Category (Combobox) */}
-            <div >
+            {/* Category */}
+                    <div >
               <label className="block text-gray-300 mb-1">Category</label>
 
               <Popover open={open} onOpenChange={setOpen}>
@@ -276,28 +276,51 @@ const ClientPostProject = () => {
 
             </div>
 
-            {/* Additional File Link */}
+            {/* Email */}
             <div>
-              <label className="block text-gray-300 mb-1">Additional File Link</label>
+              <label className="block text-gray-300 mb-1">Contact Email</label>
               <input
-                type="text"
-                name="file_url"
-                value={formData.file_url}
+                type="email"
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
-                placeholder="e.g. Google Drive Link"
+                className="w-full p-3 rounded-lg bg-[#0f0f0f] border border-gray-600"
+                required
+              />
+            </div>
+
+            {/* LinkedIn */}
+            <div>
+              <label className="block text-gray-300 mb-1">LinkedIn Profile</label>
+              <input
+                type="url"
+                name="linkedin"
+                value={formData.linkedin}
+                onChange={handleChange}
                 className="w-full p-3 rounded-lg bg-[#0f0f0f] border border-gray-600"
               />
             </div>
 
-            {/* Submit Button */}
+            {/* File URL */}
+            <div>
+              <label className="block text-gray-300 mb-1">Additional File Link</label>
+              <input
+                name="file_url"
+                value={formData.file_url}
+                onChange={handleChange}
+                className="w-full p-3 rounded-lg bg-[#0f0f0f] border border-gray-600"
+              />
+            </div>
+
             <button
               type="submit"
               disabled={loading}
               className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 
-              text-white font-semibold py-3 rounded-lg flex justify-center items-center gap-2"
+              text-white font-semibold py-3 rounded-lg flex justify-center"
             >
               {loading ? <Spinner /> : "Post Project"}
             </button>
+
           </form>
         </CardContent>
       </Card>
