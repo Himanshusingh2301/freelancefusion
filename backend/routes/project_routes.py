@@ -9,10 +9,9 @@ from bson import ObjectId
 project_bp = Blueprint("project", __name__)
 
 
-
 @project_bp.route("/post-project", methods=["POST"])
 def create_new_project():
-    """Create a new project posted by a client with a simple file URL (no upload)."""
+    """Create a new project posted by a client with contact info."""
 
     # ------------------ AUTH ------------------
     auth_header = request.headers.get("Authorization")
@@ -32,41 +31,51 @@ def create_new_project():
         deadline = request.form.get("deadline")
         skills_required = request.form.get("skills")
         category = request.form.get("category")
-        file_url = request.form.get("file_url")   
+        file_url = request.form.get("file_url")
 
-        # Required Field Check
+        email = request.form.get("email")         
+        linkedin = request.form.get("linkedin")    
+
+        # ------------------ REQUIRED FIELD CHECK ------------------
         required_fields = {
             "title": title,
             "description": description,
             "budget": budget,
             "deadline": deadline,
             "skills": skills_required,
-            "category": category
+            "category": category,
+            "email": email
         }
 
         missing = [f for f, v in required_fields.items() if not v]
         if missing:
-            return jsonify({"error": f"Missing required fields: {', '.join(missing)}"}), 400
+            return jsonify({
+                "error": f"Missing required fields: {', '.join(missing)}"
+            }), 400
 
         # ------------------ CREATE PROJECT ------------------
         new_project = create_project(
             client_clerk_id=clerk_id,
-            title=title,
-            description=description,
+            title=title.strip(),
+            description=description.strip(),
             budget=budget,
             deadline=deadline,
-            skills_required=skills_required,
-            category=category,
-            file_url=file_url 
+            skills_required=skills_required.strip(),
+            category=category.strip(),
+            email=email.strip(),          
+            linkedin=linkedin.strip() if linkedin else None,
+            file_url=file_url.strip() if file_url else None
         )
 
         return jsonify({
-            "message": "Project created successfully ✅",
+            "success": True,
+            "message": "Project created successfully ",
             "project": serialize_project(new_project)
         }), 201
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 
 @project_bp.route("/get-project", methods=["GET"])

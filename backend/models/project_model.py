@@ -15,7 +15,7 @@ def serialize_project(project):
     return project_copy
 
 
-def create_project(client_clerk_id, title, description, budget, deadline, skills_required, category,file_url=None):
+def create_project(client_clerk_id, title, description, budget, deadline, skills_required, email,category,file_url=None, linkedin=None):
     new_project = {
         "client_clerk_id": client_clerk_id,
         "title": title,
@@ -24,6 +24,8 @@ def create_project(client_clerk_id, title, description, budget, deadline, skills
         "deadline": deadline,
         "skills_required": skills_required,
         "category": category,
+        "email": email,
+        "linkedin": linkedin,
         "file_url": file_url,   # saved here
         "status": "not taken",
         "created_at": datetime.utcnow()
