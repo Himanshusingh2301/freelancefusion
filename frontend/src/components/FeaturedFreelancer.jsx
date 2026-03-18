@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const FreelancerFeatures = () => {
+    const navigate = useNavigate();
+  
   return (
     <div className='relative h-[100vh] bg-[url("/freelancer.jpeg")] bg-cover bg-center bg-no-repeat'>
 
@@ -76,7 +79,7 @@ const FreelancerFeatures = () => {
           </div>
 
           {/* Button */}
-          <button className="mt-10 px-8 py-4 text-lg font-semibold text-white 
+          <button onClick={()=>navigate("/freelancer-dashboard")} className="mt-10 px-8 py-4 text-lg font-semibold text-white 
             bg-gradient-to-r from-purple-600 to-pink-600 
             rounded-xl transition-all duration-500 
             hover:scale-105 hover:shadow-[0_0_20px_rgba(168,85,247,0.6)]">
