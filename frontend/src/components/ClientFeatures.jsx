@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const ClientFeatures = () => {
+  const navigate = useNavigate();
+  
   return (
     <div className='relative h-[100vh] bg-[url("/client.jpeg")] bg-cover bg-center bg-no-repeat'>
 
@@ -77,7 +80,7 @@ const ClientFeatures = () => {
           </div>
 
           {/* CTA */}
-          <button className="mt-10 px-8 py-4 text-lg font-semibold text-white 
+          <button onClick={()=>navigate("/client-dashboard")} className="mt-10 px-8 py-4 text-lg font-semibold text-white 
             bg-gradient-to-r from-blue-600 to-purple-600 
             rounded-xl transition-all duration-500 
             hover:scale-105 hover:shadow-[0_0_20px_rgba(59,130,246,0.6)]">
