@@ -43,11 +43,14 @@ const EditProject = () => {
         description: "",
         budget: "",
         deadline: "",
-        skills: "",
+        skills_required: "",
         category: "",
         file_url: "",
         existingFile: null,
     });
+    const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .split("T")[0];
 
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -67,7 +70,7 @@ const EditProject = () => {
                     description: data.description,
                     budget: data.budget,
                     deadline: data.deadline?.split("T")[0],
-                    skills: data.skills_required,
+                    skills_required: data.skills_required || data.skills || "",
                     category: data.category,
                     file_url: data.file_url || "",
                     existingFile: data.file_url || null,
@@ -103,7 +106,7 @@ const EditProject = () => {
         form.append("description", formData.description);
         form.append("budget", formData.budget);
         form.append("deadline", formData.deadline);
-        form.append("skills", formData.skills);
+        form.append("skills_required", formData.skills_required);
         form.append("category", formData.category);
         form.append("file_url", formData.file_url);
 
@@ -116,7 +119,10 @@ const EditProject = () => {
                 body: form,
             });
 
-            await response.json();
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || "Failed to update project");
+            }
 
             setspiralLoading(false)
             alert("Project updated successfully!");
@@ -124,7 +130,7 @@ const EditProject = () => {
         } catch (err) {
             console.error(err);
             setspiralLoading(false)
-            alert("Failed to update project");
+            alert(err.message || "Failed to update project");
         }
     };
 
@@ -194,6 +200,7 @@ const EditProject = () => {
                                     name="deadline"
                                     value={formData.deadline}
                                     onChange={handleChange}
+                                    min={today}
                                     className="w-full p-3 invert rounded-lg bg-[#f0f0f0] text-black border border-[#b4aa9c]"
                                     required
                                 />
@@ -205,8 +212,8 @@ const EditProject = () => {
                             <label className="block text-gray-300 mb-1">Required Skills</label>
                             <input
                                 type="text"
-                                name="skills"
-                                value={formData.skills}
+                                name="skills_required"
+                                value={formData.skills_required}
                                 onChange={handleChange}
                                 className="w-full p-3 rounded-lg bg-[#0f0f0f] border border-gray-600"
                                 required

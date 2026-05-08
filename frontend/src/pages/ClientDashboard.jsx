@@ -31,7 +31,23 @@ const ClientDashboard = () => {
 
         const data = await res.json();
         if (res.ok) {
-          setDbUser(data.user);
+          let projectsPosted = 0;
+          try {
+            const projectsRes = await fetch(`${BASE_URL}/get-project`, {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            const projectsData = await projectsRes.json();
+            if (projectsRes.ok) {
+              projectsPosted = (projectsData.projects || []).length;
+            }
+          } catch (projectsErr) {
+            console.error("Project count fetch error:", projectsErr);
+          }
+
+          setDbUser({ ...data.user, projectsPosted });
         } else {
           console.error("Error fetching user:", data.error);
         }

@@ -2,7 +2,7 @@ import React from "react";
 
 const AboutSection = () => {
   return (
-    <div className="relative  text-white py-28 px-24 
+    <div id="about-section" className="relative  text-white py-28 px-24 
     bg-[url('/About.jpeg')] bg-cover bg-center bg-no-repeat">
 
       {/* Dark Overlay for readability */}

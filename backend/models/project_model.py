@@ -10,6 +10,8 @@ def serialize_project(project):
         return None
     project_copy = project.copy()
     project_copy["_id"] = str(project_copy["_id"])
+    if "skills_required" not in project_copy and "skills" in project_copy:
+        project_copy["skills_required"] = project_copy["skills"]
     if "created_at" in project_copy:
         project_copy["created_at"] = project_copy["created_at"].strftime("%Y-%m-%d %H:%M:%S")
     return project_copy
@@ -54,6 +56,15 @@ def get_all_projects():
     return [serialize_project(p) for p in projects]
 
 
+def find_projects_by_freelancer(clerk_id, statuses=None):
+    """Fetch projects assigned to a freelancer, optionally filtered by status."""
+    query = {"freelancer_clerk_id": clerk_id}
+    if statuses:
+        query["status"] = {"$in": statuses}
+    projects = projects_collection.find(query).sort("created_at", -1)
+    return [serialize_project(p) for p in projects]
+
+
 def update_project_status(project_id, new_status):
     """Update project status (e.g., Open → In Progress → Completed)"""
     if not ObjectId.is_valid(project_id):
@@ -69,6 +80,7 @@ def update_project_details(project_id, update_fields):
     """Update specific project details"""
     if not ObjectId.is_valid(project_id):
         return None
+
     projects_collection.update_one(
         {"_id": ObjectId(project_id)},
         {"$set": update_fields}

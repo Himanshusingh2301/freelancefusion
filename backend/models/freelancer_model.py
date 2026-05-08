@@ -33,7 +33,7 @@ def create_freelancer(
     github=None,               
     linkedin=None          
 ):
-    new_freelancer = {
+    profile_data = {
         "freelancer_clerk_id": freelancer_clerk_id,
         "full_name": full_name,
         "email": email,                     
@@ -49,8 +49,13 @@ def create_freelancer(
         "created_at": datetime.utcnow(),
     }
 
-    freelancers_collection.insert_one(new_freelancer)
-    return new_freelancer
+    # Keep one active profile per Clerk user; update if it exists.
+    freelancers_collection.update_one(
+        {"freelancer_clerk_id": freelancer_clerk_id},
+        {"$set": profile_data},
+        upsert=True,
+    )
+    return freelancers_collection.find_one({"freelancer_clerk_id": freelancer_clerk_id})
 
 
 def get_all_freelancers():
@@ -66,3 +71,13 @@ def get_freelancer_by_id(freelancer_id):
         return serialize_freelancer(freelancer)
     except Exception:
         return None
+
+
+def get_freelancer_by_clerk_id(clerk_id):
+    """Fetch freelancer profile by Clerk user id."""
+    # If older duplicate docs exist, use most recently updated profile.
+    freelancer = freelancers_collection.find_one(
+        {"freelancer_clerk_id": clerk_id},
+        sort=[("created_at", -1)],
+    )
+    return serialize_freelancer(freelancer)

@@ -29,7 +29,7 @@ def create_new_project():
         description = request.form.get("description")
         budget = request.form.get("budget")
         deadline = request.form.get("deadline")
-        skills_required = request.form.get("skills")
+        skills_required = request.form.get("skills_required") or request.form.get("skills")
         category = request.form.get("category")
         file_url = request.form.get("file_url")
 
@@ -42,7 +42,7 @@ def create_new_project():
             "description": description,
             "budget": budget,
             "deadline": deadline,
-            "skills": skills_required,
+            "skills_required": skills_required,
             "category": category,
             "email": email
         }
@@ -138,20 +138,35 @@ def update_project(project_id):
 
     try:
         update_fields = {}
+        content_type = request.content_type or ""
+
+        field_map = {
+            "title": "title",
+            "description": "description",
+            "budget": "budget",
+            "deadline": "deadline",
+            "skills_required": "skills_required",
+            "category": "category",
+            "status": "status",
+            "file_url": "file_url",
+        }
 
         # Check if multipart or JSON
-        if "multipart/form-data" in request.content_type:
+        if "multipart/form-data" in content_type:
             form = request.form
 
-            for key in ["title", "description", "budget", "deadline", "skills", "category", "status", "file_url"]:
-                if key in form and form[key] != "":
-                    update_fields[key] = form[key]
+            for source_key, target_key in field_map.items():
+                if source_key in form and form[source_key] != "":
+                    update_fields[target_key] = form[source_key]
 
         else:  # JSON request
-            data = request.get_json()
-            for key in ["title", "description", "budget", "deadline", "skills", "category", "status", "file_url"]:
-                if key in data:
-                    update_fields[key] = data[key]
+            data = request.get_json() or {}
+            for source_key, target_key in field_map.items():
+                if source_key in data and data[source_key] not in [None, ""]:
+                    update_fields[target_key] = data[source_key]
+
+        if not update_fields:
+            return jsonify({"error": "No valid fields provided for update"}), 400
 
         # Update project in DB
         updated_project = update_project_details(project_id, update_fields)
@@ -200,5 +215,62 @@ def delete_project(project_id):
         else:
             return jsonify({"error": "Failed to delete project"}), 500
 
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@project_bp.route("/take-project/<project_id>", methods=["POST"])
+def take_project(project_id):
+    """Assign a not-taken project to current freelancer."""
+    if not ObjectId.is_valid(project_id):
+        return jsonify({"error": "Invalid project ID"}), 400
+
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({"error": "Authorization header missing"}), 401
+
+    token = auth_header.split(" ")[1]
+    try:
+        user_data = verify_clerk_token(token)
+        clerk_id = user_data["clerk_id"]
+        project = find_project_by_id(project_id)
+        if not project:
+            return jsonify({"error": "Project not found"}), 404
+        if project.get("status") != "not taken":
+            return jsonify({"error": "Project is already taken"}), 400
+
+        updated_project = update_project_details(project_id, {
+            "status": "ongoing",
+            "freelancer_clerk_id": clerk_id,
+        })
+        return jsonify({"success": True, "project": updated_project}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@project_bp.route("/complete-project/<project_id>", methods=["POST"])
+def complete_project(project_id):
+    """Mark an ongoing project as completed by assigned freelancer."""
+    if not ObjectId.is_valid(project_id):
+        return jsonify({"error": "Invalid project ID"}), 400
+
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({"error": "Authorization header missing"}), 401
+
+    token = auth_header.split(" ")[1]
+    try:
+        user_data = verify_clerk_token(token)
+        clerk_id = user_data["clerk_id"]
+        project = find_project_by_id(project_id)
+        if not project:
+            return jsonify({"error": "Project not found"}), 404
+        if project.get("freelancer_clerk_id") != clerk_id:
+            return jsonify({"error": "Unauthorized"}), 403
+        if project.get("status") != "ongoing":
+            return jsonify({"error": "Only ongoing projects can be completed"}), 400
+
+        updated_project = update_project_details(project_id, {"status": "completed"})
+        return jsonify({"success": True, "project": updated_project}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

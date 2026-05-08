@@ -1,7 +1,22 @@
 import React from "react";
 import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram } from "react-icons/fa";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Footer = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const goToAboutSection = () => {
+    if (location.pathname === "/") {
+      const aboutSection = document.getElementById("about-section");
+      if (aboutSection) {
+        aboutSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      return;
+    }
+    navigate("/", { state: { scrollTo: "about" } });
+  };
+
   return (
     <footer className="relative bg-black text-white px-24 py-16 border-t border-white/10">
 
@@ -15,7 +30,10 @@ const Footer = () => {
             <img src="/logo.png" alt="Logo" className="w-44" />
           </div>
 
-        
+          <p className="text-gray-400 leading-relaxed text-sm max-w-xs">
+            FreelanceFusion is an ML-powered freelance marketplace where clients post projects
+            and freelancers discover work matched to their skills.
+          </p>
         </div>
 
         {/* Right Side - Links & Social */}
@@ -27,23 +45,23 @@ const Footer = () => {
               Quick Links
             </h4>
             <ul className="space-y-4 text-gray-400">
-              <li className="hover:text-white transition">Home</li>
-              <li className="hover:text-white transition">About</li>
-              <li className="hover:text-white transition">Freelancers</li>
-              <li className="hover:text-white transition">Clients</li>
+              <li className="hover:text-white transition cursor-pointer" onClick={() => navigate("/")}>Home</li>
+              <li className="hover:text-white transition cursor-pointer" onClick={goToAboutSection}>About</li>
+              <li className="hover:text-white transition cursor-pointer" onClick={() => navigate("/freelancer/find-projects")}>Find Works</li>
+              <li className="hover:text-white transition cursor-pointer" onClick={() => navigate("/freelancer/find-freelancer")}>Hire Freelancers</li>
             </ul>
           </div>
 
           {/* Menu */}
           <div>
             <h4 className="text-lg font-semibold mb-6 text-blue-400">
-              Menu
+              Dashboards
             </h4>
             <ul className="space-y-4 text-gray-400">
-              <li className="hover:text-white transition">Post a Project</li>
-              <li className="hover:text-white transition">Find Talent</li>
-              <li className="hover:text-white transition">Dashboard</li>
-              <li className="hover:text-white transition">Contact</li>
+              <li className="hover:text-white transition cursor-pointer" onClick={() => navigate("/client-dashboard")}>Client Dashboard</li>
+              <li className="hover:text-white transition cursor-pointer" onClick={() => navigate("/freelancer-dashboard")}>Freelancer Dashboard</li>
+              <li className="hover:text-white transition cursor-pointer" onClick={() => navigate("/client-dashboard/post-project")}>Post Project</li>
+              <li className="hover:text-white transition cursor-pointer" onClick={() => navigate("/freelancer/apply")}>Freelancer Profile</li>
             </ul>
           </div>
 
@@ -54,21 +72,21 @@ const Footer = () => {
             </h4>
             <div className="flex space-x-4">
 
-              <div className="p-3 bg-white/5 rounded-lg hover:bg-purple-600 transition cursor-pointer">
+              <a href="https://facebook.com" target="_blank" rel="noreferrer" className="p-3 bg-white/5 rounded-lg hover:bg-purple-600 transition cursor-pointer">
                 <FaFacebookF />
-              </div>
+              </a>
 
-              <div className="p-3 bg-white/5 rounded-lg hover:bg-blue-500 transition cursor-pointer">
+              <a href="https://x.com" target="_blank" rel="noreferrer" className="p-3 bg-white/5 rounded-lg hover:bg-blue-500 transition cursor-pointer">
                 <FaTwitter />
-              </div>
+              </a>
 
-              <div className="p-3 bg-white/5 rounded-lg hover:bg-blue-700 transition cursor-pointer">
+              <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="p-3 bg-white/5 rounded-lg hover:bg-blue-700 transition cursor-pointer">
                 <FaLinkedinIn />
-              </div>
+              </a>
 
-              <div className="p-3 bg-white/5 rounded-lg hover:bg-pink-500 transition cursor-pointer">
+              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="p-3 bg-white/5 rounded-lg hover:bg-pink-500 transition cursor-pointer">
                 <FaInstagram />
-              </div>
+              </a>
 
             </div>
           </div>

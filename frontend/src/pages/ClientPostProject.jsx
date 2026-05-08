@@ -32,6 +32,9 @@ const categories = [
 const ClientPostProject = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .split("T")[0];
 
   const [formData, setFormData] = useState({
     title: "",
@@ -169,6 +172,7 @@ const ClientPostProject = () => {
                   name="deadline"
                   value={formData.deadline}
                   onChange={handleChange}
+                  min={today}
                   className="w-full p-3 invert rounded-lg bg-[#f0f0f0] text-black border border-[#b4aa9c]"
                   required
                 />

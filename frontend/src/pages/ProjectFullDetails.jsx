@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Clock, FileText, ArrowLeft } from "lucide-react";
+import { useAuth } from "@clerk/clerk-react";
 import { Spinner } from "@/components/ui/spinner";
 import SidePanel from "@/components/ClientsidePanel";
 
 const ProjectFullDetails = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
+  const { getToken } = useAuth();
 
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [taking, setTaking] = useState(false);
 
   const fetchProjectDetails = async () => {
     try {
@@ -34,6 +37,28 @@ const ProjectFullDetails = () => {
   useEffect(() => {
     fetchProjectDetails();
   }, [projectId]);
+
+  const handleTakeProject = async () => {
+    try {
+      setTaking(true);
+      const token = await getToken();
+      const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+      const res = await fetch(`${BASE_URL}/take-project/${projectId}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Could not take project");
+      }
+      await fetchProjectDetails();
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Could not take project");
+    } finally {
+      setTaking(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -155,6 +180,18 @@ const ProjectFullDetails = () => {
                 <FileText size={16} />
                 View Attached File
               </a>
+            </div>
+          )}
+
+          {project.status === "not taken" && (
+            <div className="mt-8">
+              <button
+                onClick={handleTakeProject}
+                disabled={taking}
+                className="px-5 py-2 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40 hover:bg-purple-500/30 transition"
+              >
+                {taking ? "Taking..." : "Take This Project"}
+              </button>
             </div>
           )}
         </div>

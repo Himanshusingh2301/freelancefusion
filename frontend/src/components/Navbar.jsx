@@ -10,21 +10,24 @@ import {
     UserButton,
 } from "@clerk/clerk-react";
 
-import {
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSub,
-    DropdownMenuSubTrigger,
-    DropdownMenuSubContent,
-} from "@/components/ui/dropdown-menu";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
     const { user } = useUser();
     const { getToken } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const handleAboutClick = () => {
+        if (location.pathname === "/") {
+            const aboutSection = document.getElementById("about-section");
+            if (aboutSection) {
+                aboutSection.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+            return;
+        }
+        navigate("/", { state: { scrollTo: "about" } });
+    };
     useEffect(() => {
         const addUserToDB = async () => {
             if (!user) return;
@@ -69,59 +72,24 @@ const Navbar = () => {
                     <span className="cursor-pointer hover:text-pink-500" onClick={() => {
                         navigate("/")
                     }}>Home</span>
-                    {/* Menu 1 */}
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild className="outline-0">
-                            <span className="cursor-pointer hover:text-pink-500">
-                                Hire Freelancers
-                            </span>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-gray-800 text-white">
-                            <DropdownMenuSub>
-                                <DropdownMenuSubTrigger>List One</DropdownMenuSubTrigger>
-                                <DropdownMenuSubContent className="bg-gray-700 text-white">
-                                    <DropdownMenuItem>Link 1</DropdownMenuItem>
-                                    <DropdownMenuItem>Link 2</DropdownMenuItem>
-                                </DropdownMenuSubContent>
-                            </DropdownMenuSub>
-                            <DropdownMenuSub>
-                                <DropdownMenuSubTrigger>List Two</DropdownMenuSubTrigger>
-                                <DropdownMenuSubContent className="bg-gray-700 text-white">
-                                    <DropdownMenuItem>Link A</DropdownMenuItem>
-                                    <DropdownMenuItem>Link B</DropdownMenuItem>
-                                </DropdownMenuSubContent>
-                            </DropdownMenuSub>
-                            <DropdownMenuItem>Direct Link</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-
-                    {/* Menu 2 */}
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild className="outline-0">
-                            <span className="cursor-pointer hover:text-orange-300">
-                                Find Work
-                            </span>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-gray-800 text-white">
-                            <DropdownMenuItem>Projects</DropdownMenuItem>
-                            <DropdownMenuItem>Contests</DropdownMenuItem>
-                            <DropdownMenuItem>Categories</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-
-                    {/* Menu 3 */}
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild className="outline-0">
-                            <span className="cursor-pointer hover:text-purple-300">
-                                About Us
-                            </span>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-gray-800 text-white">
-                            <DropdownMenuItem>Company</DropdownMenuItem>
-                            <DropdownMenuItem>Careers</DropdownMenuItem>
-                            <DropdownMenuItem>Contact</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <span
+                        className="cursor-pointer hover:text-pink-500"
+                        onClick={() => navigate("/freelancer/find-freelancer")}
+                    >
+                        Hire Freelancers
+                    </span>
+                    <span
+                        className="cursor-pointer hover:text-orange-300"
+                        onClick={() => navigate("/freelancer/find-projects")}
+                    >
+                        Find Work
+                    </span>
+                    <span
+                        className="cursor-pointer hover:text-purple-300"
+                        onClick={handleAboutClick}
+                    >
+                        About Us
+                    </span>
                 </div>
             </div>
 

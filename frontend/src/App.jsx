@@ -13,6 +13,8 @@ import ActiveProjectList from "./pages/ActiveProjectList";
 import FreelancerList from "./pages/FreelancerList";
 import ProjectFullDetails from "./pages/ProjectFullDetails";
 import FreelancerFullDetails from "./pages/FreelancerFullDetails";
+import FreelancerActiveProjects from "./pages/FreelancerActiveProjects";
+import FreelancerWorkHistory from "./pages/FreelancerWorkHistory";
 function App() {
 
   return (
@@ -82,6 +84,8 @@ function App() {
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/freelancer/apply" element = {<PostFreelancer/>} />
         <Route path="/freelancer/find-projects" element={<ActiveProjectList/>} />
+        <Route path="/freelancer/active-projects" element={<FreelancerActiveProjects />} />
+        <Route path="/freelancer/work-history" element={<FreelancerWorkHistory />} />
         <Route path="/freelancer/find-freelancer" element={<FreelancerList/>} />
         <Route path="/project/:projectId" element={<ProjectFullDetails />} />
         <Route path="/freelancer/:freelancerId" element={<FreelancerFullDetails />} />

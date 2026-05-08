@@ -31,7 +31,20 @@ const FreelancerDashboard = () => {
 
                 const data = await res.json();
                 if (res.ok) {
-                    setDbUser(data.user);
+                    let projectsDone = 0;
+                    try {
+                        const historyRes = await fetch(`${BASE_URL}/work-history`, {
+                            headers: { Authorization: `Bearer ${token}` },
+                        });
+                        const historyData = await historyRes.json();
+                        if (historyRes.ok) {
+                            projectsDone = historyData.count || (historyData.projects || []).length || 0;
+                        }
+                    } catch (historyErr) {
+                        console.error("History fetch error:", historyErr);
+                    }
+
+                    setDbUser({ ...data.user, projectsDone });
                 } else {
                     console.error("Error fetching user:", data.error);
                 }
